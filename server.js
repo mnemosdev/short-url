@@ -1,7 +1,7 @@
 var express = require("express");
 if (typeof localStorage === "undefined" || localStorage === null){
-	var localStorage = require("node-localstorage").LocalStorage;
-	localStorage = new localStorage("./localStorage");
+	var LocalStorage = require("node-localstorage").LocalStorage;
+	localStorage = new LocalStorage("./localStorage");
 }
 
 var app = express();
@@ -12,11 +12,20 @@ app.get("/new/*?", function(req, res){
 	var regex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
 	var url = req.params[0].match(regex)[0];
 	localStorage.setItem(number, url);
-	n++;
-	res.send("short url " + 
+	res.send("short url https://short-url-fcc-mnemosdev.herokuapp.com/" + number);
+	// res.send("visit http://192.168.1.127:3003/" + number);
+	number++;
+	console.log(localStorage);
+	console.log(number, url);
+});
+app.get("/:shorturl", function(req, res){
+	var url = req.params.shorturl;
+	var oldurl = localStorage.getItem(url) || "404";
+	res.redirect(oldurl);
+	console.log(url, oldurl);
 });
 app.all("*", function(req, res){
-	res.send("/:url");
+	res.send("/new/:url");
 });
 app.listen(process.env.PORT || 3003, function(){
 	console.log("listening");
